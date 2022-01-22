@@ -13,11 +13,24 @@ import React, {useContext} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import chatContext, {controlMessageEnum} from './ChatContext';
 import ColorContext from './ColorContext';
+import PrimaryButton from '../atoms/PrimaryButton';
 import SecondaryButton from '../atoms/SecondaryButton';
+import TextInput from '../atoms/TextInput';
+
+import {PollContext} from './PollContext';
 
 const HostControlView = () => {
   const {sendControlMessage} = useContext(chatContext);
   const {primaryColor} = useContext(ColorContext);
+  const {
+    question,
+    setQuestions,
+    answers,
+    setAnswers,
+    isModalOpen,
+    setIsModalOpen,
+  } = useContext(PollContext);
+
   return (
     <>
       <Text style={style.heading}>Host Controls</Text>
@@ -32,6 +45,40 @@ const HostControlView = () => {
           <SecondaryButton
             onPress={() => sendControlMessage(controlMessageEnum.muteVideo)}
             text={'Mute all videos'}
+          />
+        </View>
+        <Text style={style.heading}>Create a Poll</Text>
+        <View style={{marginTop: '20px'}}>
+          <TextInput
+            value={question}
+            onChangeText={setQuestions}
+            placeholder="Poll Question"
+          />
+          <br />
+          {answers.map((answer: any, i: number) => (
+            <div key={i}>
+              <br />
+              <TextInput
+                value={answer.option}
+                onChangeText={(value) =>
+                  setAnswers([
+                    ...answers.slice(0, i),
+                    {option: value, votes: 0},
+                    ...answers.slice(i + 1),
+                  ])
+                }
+                placeholder={`Poll Answer ${i + 1}`} // i starts from 0
+              />
+            </div>
+          ))}
+        </View>
+        <View style={style.btnContainer}>
+          <PrimaryButton
+            onPress={() => {
+              setIsModalOpen(true);
+              sendControlMessage(controlMessageEnum.initiatePoll, {question, answers});
+            }}
+            text="Start Poll"
           />
         </View>
       </View>

@@ -46,8 +46,9 @@ export enum controlMessageEnum {
   kickUser = '5',
   cloudRecordingActive = '6',
   cloudRecordingUnactive = '7',
+  initiatePoll = '8',
 }
 
-const ChatContext = createContext((null as unknown) as chatContext);
+const ChatContext = createContext(null as unknown as chatContext);
 
 export default ChatContext;
